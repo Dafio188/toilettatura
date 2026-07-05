@@ -346,9 +346,15 @@ export default async function SuperAdminDashboard() {
                         <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold ${
                           lead.status === 'new' ? 'bg-teal-500/15 text-teal-300 ring-1 ring-inset ring-teal-500/25' :
                           lead.status === 'contacted' ? 'bg-blue-500/15 text-blue-300 ring-1 ring-inset ring-blue-500/25' :
-                          'bg-slate-700/30 text-slate-400 ring-1 ring-inset ring-slate-700/20'
+                          lead.status === 'negotiating' ? 'bg-amber-500/15 text-amber-300 ring-1 ring-inset ring-amber-500/25' :
+                          lead.status === 'callback' ? 'bg-indigo-500/15 text-indigo-300 ring-1 ring-inset ring-indigo-500/25' :
+                          'bg-emerald-500/15 text-emerald-300 ring-1 ring-inset ring-emerald-500/20'
                         }`}>
-                          {lead.status === 'new' ? 'Nuovo' : lead.status === 'contacted' ? 'Contattato' : 'Gestito'}
+                          {lead.status === 'new' ? 'Nuovo' :
+                           lead.status === 'contacted' ? 'Contattato' :
+                           lead.status === 'negotiating' ? 'In trattativa' :
+                           lead.status === 'callback' ? 'Da ricontattare' :
+                           'Chiuso (Firmato)'}
                         </span>
                       </td>
                       <td className="py-3.5 px-4 text-right">
