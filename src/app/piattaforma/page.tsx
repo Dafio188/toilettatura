@@ -50,6 +50,20 @@ export default function PiattaformaPage() {
             <Button className="w-full" variant="secondary">Richiedi una demo</Button>
           </Link>
         </div>
+
+        <div className="mt-6 overflow-hidden rounded-2xl border border-slate-800 bg-slate-950/50 shadow-2xl">
+          <video 
+            controls 
+            preload="metadata" 
+            playsInline 
+            className="aspect-video w-full"
+            poster="/hero-station.png"
+          >
+            <source src="/Gestione_Software.webm" type="video/webm" />
+            <source src="/Gestione_Software.mp4" type="video/mp4" />
+            Il tuo browser non supporta il tag video.
+          </video>
+        </div>
       </section>
 
       <section className="grid gap-3 lg:grid-cols-3">

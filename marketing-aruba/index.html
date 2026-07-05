@@ -1216,9 +1216,9 @@
                 Inizia Ora (Gratis)
                 <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
               </a>
-              <a href="#cta-finale" class="btn btn-lg">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
-                Richiedi una demo
+              <a href="#" onclick="openVideoModal(event)" class="btn btn-lg">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="currentColor"/></svg>
+                Guarda Video Demo
               </a>
             </div>
             <div class="hero-trust">
@@ -2533,6 +2533,39 @@
         document.body.style.overflow = ''; // restore scrolling
       }
     }
+    // ── VIDEO MODAL LOGIC ───────────────────────────────────────
+    function openVideoModal(e) {
+      if (e) e.preventDefault();
+      const modal = document.getElementById('video-modal');
+      const player = document.getElementById('demo-video-player');
+      if (modal && player) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        player.currentTime = 0;
+        player.play().catch(function(err) {
+          console.log("Autoplay blocked, playing muted:", err);
+          player.muted = true;
+          player.play();
+        });
+      }
+    }
+
+    function closeVideoModal(e) {
+      if (e) e.stopPropagation();
+      const modal = document.getElementById('video-modal');
+      const player = document.getElementById('demo-video-player');
+      if (modal && player) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+        player.pause();
+      }
+    }
+
+    window.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeVideoModal();
+      }
+    });
     </script>
 
     <!-- Modal per dettagli funzionalità -->
@@ -2552,6 +2585,18 @@
             </ul>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Modal per video demo -->
+    <div id="video-modal" class="feature-modal-overlay" onclick="closeVideoModal(event)">
+      <div class="feature-modal-card" style="max-width: 800px; background: #000;" onclick="event.stopPropagation()">
+        <button class="feature-modal-close" aria-label="Chiudi" onclick="closeVideoModal(event)">&times;</button>
+        <video id="demo-video-player" controls preload="metadata" playsinline class="w-full" style="aspect-ratio: 16/9; display: block; border-radius: 28px;">
+          <source src="./Gestione_Software.webm" type="video/webm">
+          <source src="./Gestione_Software.mp4" type="video/mp4">
+          Il tuo browser non supporta il tag video.
+        </video>
       </div>
     </div>
   </body>
