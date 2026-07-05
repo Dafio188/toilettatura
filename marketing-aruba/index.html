@@ -1061,6 +1061,96 @@
         .hero-ctas { flex-direction: column; }
         .hero-ctas .btn { width: 100%; justify-content: center; }
       }
+
+      /* ── FEATURE DETAIL MODAL ─────────────────────────── */
+      .feature-modal-overlay {
+        position: fixed; inset: 0; z-index: 10000;
+        background: rgba(2, 6, 23, 0.7);
+        backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+        display: flex; align-items: center; justify-content: center;
+        padding: 20px; opacity: 0; pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+      .feature-modal-overlay.active {
+        opacity: 1; pointer-events: auto;
+      }
+      .feature-modal-card {
+        background: rgba(15, 23, 42, 0.95);
+        backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 28px; width: 100%; max-width: 900px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        position: relative; overflow: hidden;
+        transform: scale(0.95);
+        transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        display: flex; flex-direction: column;
+      }
+      .feature-modal-overlay.active .feature-modal-card {
+        transform: scale(1);
+      }
+      .feature-modal-close {
+        position: absolute; top: 16px; right: 16px; z-index: 10;
+        width: 36px; height: 36px; border-radius: 50%;
+        background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08);
+        color: #fff; font-size: 20px; cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        transition: all 0.2s ease;
+      }
+      .feature-modal-close:hover {
+        background: rgba(255, 255, 255, 0.15); transform: rotate(90deg);
+      }
+      .feature-modal-content {
+        display: grid; gap: 32px; padding: 32px;
+      }
+      @media (min-width: 768px) {
+        .feature-modal-content {
+          grid-template-columns: 1.15fr 1fr;
+          align-items: center;
+        }
+      }
+      .feature-modal-media {
+        border-radius: 18px; overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 12px 24px rgba(0,0,0,0.3);
+        background: rgba(2, 6, 23, 0.4);
+      }
+      .feature-modal-media img {
+        width: 100%; height: auto; display: block;
+        object-fit: contain; max-height: 400px;
+      }
+      .feature-modal-info {
+        display: flex; flex-direction: column; gap: 16px;
+      }
+      .feature-modal-info h3 {
+        font-size: 22px; font-weight: 800; letter-spacing: -0.02em; color: #fff;
+        line-height: 1.2;
+      }
+      .feature-modal-info p {
+        font-size: 13.5px; color: #94a3b8; line-height: 1.6;
+      }
+      .feature-modal-bullets {
+        list-style: none; display: flex; flex-direction: column; gap: 10px;
+        margin-top: 4px;
+      }
+      .feature-modal-bullet-item {
+        display: flex; align-items: flex-start; gap: 8px;
+        font-size: 12.5px; color: #cbd5e1;
+        line-height: 1.4;
+      }
+      .feature-modal-bullet-icon {
+        color: var(--cyan); font-weight: 700; flex-shrink: 0;
+      }
+
+      /* Make cards feel clickable */
+      .feature-card {
+        cursor: pointer;
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s, box-shadow 0.3s;
+      }
+      .feature-card:hover {
+        transform: translateY(-6px) scale(1.01) !important;
+        border-color: rgba(6, 182, 212, 0.4) !important;
+        box-shadow: 0 12px 40px rgba(6, 182, 212, 0.15) !important;
+      }
     </style>
   </head>
   <body>
@@ -1904,6 +1994,7 @@
       buildFAQ();
       updateROI();
       initIntersectionObserver();
+      initFeatureModal();
     });
 
     // ── SCROLL PROGRESS ───────────────────────────────────────
@@ -2276,6 +2367,192 @@
         alert("Impossibile scaricare il file. Copia i dati direttamente dallo schermo.");
       }
     }
+
+    // ── FEATURE DETAIL MODAL LOGIC ─────────────────────────────
+    const FEATURE_DETAILS = {
+      "Disponibilità real-time & anti-overbooking": {
+        tag: "Prenotazioni",
+        title: "Disponibilità in tempo reale e prevenzione overbooking",
+        desc: "L'agenda intelligente di DogWash24 previene qualsiasi conflitto di prenotazione. La disponibilità è calcolata istantaneamente sul server per evitare che due clienti prenotino la stessa vasca.",
+        img: "./Immagine_prenotazione.png",
+        bullets: [
+          "Sincronizzazione in tempo reale di tutte le prenotazioni del salone",
+          "Logica anti-collisione automatica operata a livello server-side",
+          "Interfaccia cliente mobile-first fluida: si prenota in meno di 10 secondi",
+          "Supporto per prenotazioni singole, ricorrenti o pacchetti promozionali"
+        ]
+      },
+      "Wallet a crediti prepagati": {
+        tag: "Wallet",
+        title: "Crediti prepagati e ricarica wallet integrata",
+        desc: "Elimina la cassa fisica e la gestione del contante in negozio. I clienti ricaricano comodamente il loro portafoglio virtuale direttamente dall'applicazione prima di lavare il cane.",
+        img: "./Immagine_acquisti_crediti.png",
+        bullets: [
+          "Pagamenti sicuri e istantanei tramite Stripe (Apple Pay, Google Pay, Carte)",
+          "Emissione automatica di fatture e ricevute via email ad ogni ricarica",
+          "Addebito dinamico dei crediti basato sul servizio e sulla taglia del cane",
+          "Storico trasparente dei movimenti per monitorare ogni singola sessione"
+        ]
+      },
+      "QR Code firmato per il check-in": {
+        tag: "Check-in",
+        title: "Accesso H24 self-service con QR Code firmato",
+        desc: "Garantisci l'apertura 24 ore su 24 senza bisogno di personale. Il cliente sblocca la porta d'ingresso e avvia la postazione scansionando il QR Code generato dopo la prenotazione.",
+        img: "./Immagine_Kiosk_struttura.png",
+        bullets: [
+          "QR Code cifrato e sicuro con validità limitata alla finestra oraria scelta",
+          "Integrazione diretta con relè IoT per lo sblocco di porte e macchinari",
+          "Check-in istantaneo in meno di 2 secondi tramite scanner o fotocamera",
+          "Pieno controllo dell'accesso alla struttura e tracciamento della presenza"
+        ]
+      },
+      "Dashboard admin completa": {
+        tag: "Admin",
+        title: "Gestione totale del salone da una sola interfaccia",
+        desc: "Controlla ogni aspetto della tua attività da qualsiasi dispositivo. Monitora le vendite, gestisci i listini prezzi, configura le promozioni e gestisci le anagrafiche dei tuoi clienti.",
+        img: "./Immagine_admin_homepage.png",
+        bullets: [
+          "Visualizzazione immediata dei ricavi, prenotazioni e sessioni attive",
+          "Gestione semplificata delle anagrafiche clienti e portafoglio crediti",
+          "Configurazione flessibile di orari, postazioni, servizi e tariffe",
+          "Gestione operatori e turni di lavoro per saloni a servizio assistito"
+        ]
+      },
+      "Sessioni live con timer": {
+        tag: "Sessioni",
+        title: "Controllo in tempo reale delle postazioni e timer live",
+        desc: "Segui lo stato di utilizzo del tuo salone in tempo reale. L'admin vede esattamente quale vasca è in funzione, quale cliente la sta usando e quanto tempo rimane alla sessione.",
+        img: "./Immagine_admin_postazioni.png",
+        bullets: [
+          "Aggiornamento live dello stato delle vasche e degli asciugatori",
+          "Avvio, pausa o spegnimento forzato dei macchinari da remoto",
+          "Interruzione automatica dell'erogazione dei servizi allo scadere del timer",
+          "Notifiche acustiche e avvisi in dashboard per lo staff in struttura"
+        ]
+      },
+      "Profili cane multi-pet": {
+        tag: "Profili",
+        title: "Gestione profili cane e preferenze per singolo animale",
+        desc: "Offri un servizio personalizzato e su misura per ogni cane. I clienti possono registrare più animali impostando razza, taglia, tipologia di pelo e note caratteriali specifiche.",
+        img: "./Immagine_dashboard_registrazione_cane.png",
+        bullets: [
+          "Calcolo automatico del tempo di lavaggio necessario in base alla taglia",
+          "Annotazione di patologie, intolleranze o paure (es. phon caldo)",
+          "Salvataggio delle combinazioni di servizi preferiti per prenotazioni rapide",
+          "Registro storico e cronologia di tutti i lavaggi effettuati per ciascun cane"
+        ]
+      },
+      "Report e analytics": {
+        tag: "Report",
+        title: "Analisi approfondite, ricavi e saturazione dell'impianto",
+        desc: "Prendi decisioni basate sui dati reali. Analizza l'andamento del fatturato, scopri le ore di punta in cui le postazioni sono sature e ottimizza i prezzi per massimizzare i profili.",
+        img: "./Immagine_admin_homepage.png",
+        bullets: [
+          "Report finanziari dettagliati suddivisi per tipologia di pagamento",
+          "Statistiche sull'uso effettivo di ogni postazione per fascia oraria",
+          "Analisi sul tasso di fidelizzazione e frequenza di ritorno dei clienti",
+          "Esportazione rapida dei dati in formato CSV compatibile con la contabilità"
+        ]
+      },
+      "Sistema Ibrido & Assistenza": {
+        tag: "Ibrido",
+        title: "Modello di business ibrido: Self-Service + Assistenza Staff",
+        desc: "Unisci la convenienza dell'H24 self-service alla qualità della toelettatura assistita. I clienti in vasca possono richiedere l'intervento dello staff premendo un semplice tasto sul telefono.",
+        img: "./Immagine_admin_postazioni.png",
+        bullets: [
+          "Gestione unificata di self-service H24 e servizi con operatore nello stesso gestionale",
+          "Pulsante di chiamata SOS digitale collegato all'orologio o telefono dello staff",
+          "Assegnazione automatica del servizio assistito in caso di chiamata attiva",
+          "Addebito automatico del supplemento (es. +15 crediti) direttamente sul wallet"
+        ]
+      },
+      "Sicurezza & affidabilità enterprise": {
+        tag: "Sicurezza",
+        title: "Infrastruttura sicura, protetta e conforme al GDPR",
+        desc: "Proteggiamo la tua attività ed i dati dei tuoi clienti con i più elevati standard di sicurezza. L'architettura è progettata per essere solida, veloce e costantemente disponibile.",
+        img: "./Immagine_home.png",
+        bullets: [
+          "Autenticazione sicura PKCE e sessioni protette tramite token JWT",
+          "Isolamento dei dati tramite Row Level Security (RLS) a livello DB",
+          "Serverless cloud con ridondanza geografica e uptime garantito del 99.9%",
+          "Piena conformità al regolamento europeo sulla protezione dei dati (GDPR)"
+        ]
+      }
+    };
+
+    function initFeatureModal() {
+      const modal = document.getElementById('feature-modal');
+      if (!modal) return;
+
+      const modalImg = document.getElementById('modal-img');
+      const modalTag = document.getElementById('modal-tag');
+      const modalTitle = document.getElementById('modal-title');
+      const modalDesc = document.getElementById('modal-desc');
+      const modalBullets = document.getElementById('modal-bullets');
+
+      document.querySelectorAll('.feature-card').forEach(function(card) {
+        card.addEventListener('click', function() {
+          const titleText = card.querySelector('.feature-title').textContent.trim();
+          const details = FEATURE_DETAILS[titleText];
+          if (!details) return;
+
+          modalImg.src = details.img;
+          modalImg.alt = details.title;
+          modalTag.textContent = details.tag;
+          modalTitle.textContent = details.title;
+          modalDesc.textContent = details.desc;
+
+          // Clear and fill bullets
+          modalBullets.innerHTML = '';
+          details.bullets.forEach(function(bullet) {
+            const li = document.createElement('li');
+            li.className = 'feature-modal-bullet-item';
+            li.innerHTML = '<span class="feature-modal-bullet-icon">✓</span><span>' + bullet + '</span>';
+            modalBullets.appendChild(li);
+          });
+
+          modal.classList.add('active');
+          document.body.style.overflow = 'hidden'; // block scrolling
+        });
+      });
+
+      // Close actions
+      const closeBtn = modal.querySelector('.feature-modal-close');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', closeModal);
+      }
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) closeModal();
+      });
+      window.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeModal();
+      });
+
+      function closeModal() {
+        modal.classList.remove('active');
+        document.body.style.overflow = ''; // restore scrolling
+      }
+    }
     </script>
+
+    <!-- Modal per dettagli funzionalità -->
+    <div id="feature-modal" class="feature-modal-overlay">
+      <div class="feature-modal-card">
+        <button class="feature-modal-close" aria-label="Chiudi">&times;</button>
+        <div class="feature-modal-content">
+          <div class="feature-modal-media">
+            <img id="modal-img" src="" alt="Screenshot funzionalità" />
+          </div>
+          <div class="feature-modal-info">
+            <span id="modal-tag" class="feature-tag">Tag</span>
+            <h3 id="modal-title">Titolo</h3>
+            <p id="modal-desc">Descrizione estesa...</p>
+            <ul id="modal-bullets" class="feature-modal-bullets">
+              <!-- Popolato via JS -->
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
