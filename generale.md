@@ -162,12 +162,15 @@ Nota: la ricarica crediti (pagamento/incasso) richiede internet.
 - Prenotazione guidata.
 - Wallet crediti e storico movimenti.
 - Dettaglio prenotazione e export calendario.
+- **Demo Interattiva di Prenotazione**: Flusso simulato lato cliente finale per testare l'esperienza d'uso ("Apple Feel") prima dell'acquisto.
 
 ### 5.2 Moduli admin (impianto)
 - Clienti e saldi.
 - Prenotazioni: filtri per stato e date, azioni admin.
 - Pagamenti/ledger: dashboard economica con filtri ed export CSV.
 - Postazioni: configurazione e mappa/layout.
+- **CRM Gestione Lead (Superadmin)**: Pannello di tracciamento commerciale delle richieste con 5 stati operativi (*Nuovo*, *Contattato*, *In trattativa*, *Da ricontattare*, *Chiuso/Firmato*).
+- **Automazione Email (Resend)**: Notifiche istantanee al gestore in caso di nuovo lead ed email di benvenuto automatica inviata al cliente con il riepilogo del piano scelto.
 
 ## 6) Cosa non è incluso (esclusioni)
 
@@ -193,8 +196,9 @@ Per un wallet globale multi-impianto in offline si applicano regole per ridurre 
 
 ## 8) Sicurezza e anti-copia (principi)
 
-Obiettivo: impedire che il software venga copiato e riutilizzato senza controllo, senza consegnare il codice sorgente.
+Obiettivo: garantire la massima integrità dei dati, impedire copie non autorizzate e proteggere le comunicazioni.
 
+- **Politiche di Sicurezza HTTP avanzate**: Adozione di header di protezione rigorosi (`Strict-Transport-Security` / HSTS a 1 anno, `Content-Security-Policy` / CSP ottimizzata per proteggere le connessioni esterne del sito, `X-Frame-Options` anti-clickjacking, `Permissions-Policy` per protezione hardware, e rimozione delle intestazioni software `X-Powered-By`).
 - Installazione per impianto tramite appliance.
 - Licenza per impianto e per numero postazioni.
 - Aggiornamenti disponibili solo con maintenance attiva.
