@@ -46,9 +46,9 @@ export default function PiattaformaPage() {
           <Link href="/prenota" className="w-full sm:w-auto">
             <Button className="w-full" variant="primary">Vedi demo prenotazione</Button>
           </Link>
-          <a className="w-full sm:w-auto" href="mailto:info@dogwash24.it?subject=Richiesta%20demo%20DogWash24">
+          <Link href="/richiedi-info?plan=PRO" className="w-full sm:w-auto">
             <Button className="w-full" variant="secondary">Richiedi una demo</Button>
-          </a>
+          </Link>
         </div>
       </section>
 
