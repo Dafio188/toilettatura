@@ -211,12 +211,12 @@ export default function InfoForm() {
               </div>
 
               <div className="pt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <Link
-                  href="/piattaforma"
+                <a
+                  href="https://www.dogwash24.it"
                   className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-slate-200"
                 >
                   <ArrowLeft className="h-3 w-3" /> Torna alle informazioni
-                </Link>
+                </a>
 
                 <button
                   type="submit"
@@ -255,13 +255,20 @@ export default function InfoForm() {
               Grazie per l&apos;interesse. Un consulente DogWash24 verificherà la tua richiesta e ti contatterà via email o telefono nelle prossime ore.
             </p>
 
-            <div className="mt-8 flex flex-col gap-2 sm:flex-row sm:justify-center">
-              <button
-                onClick={() => router.push("/piattaforma")}
-                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-900 border border-slate-800 px-6 py-3 text-xs font-semibold text-slate-200 transition-all hover:bg-slate-800"
+            <div className="mt-8 flex flex-col gap-2 sm:flex-row sm:justify-center items-center">
+              <Link
+                href="/prenota"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-teal-500 px-6 py-3 text-xs font-bold text-slate-950 shadow-lg shadow-teal-500/10 transition-all hover:bg-teal-400 w-full sm:w-auto"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                Prova Demo Prenotazione
+              </Link>
+              <a
+                href="https://www.dogwash24.it"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-900 border border-slate-800 px-6 py-3 text-xs font-semibold text-slate-200 transition-all hover:bg-slate-800 w-full sm:w-auto"
               >
                 Torna al sito
-              </button>
+              </a>
               <button
                 onClick={() => {
                   setFormData({
@@ -275,7 +282,7 @@ export default function InfoForm() {
                   });
                   setSuccess(false);
                 }}
-                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-teal-500/10 border border-teal-500/20 px-6 py-3 text-xs font-bold text-teal-300 transition-all hover:bg-teal-500/20"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-900/40 border border-slate-800/80 px-6 py-3 text-xs font-semibold text-slate-450 transition-all hover:text-slate-200 hover:bg-slate-800/40 w-full sm:w-auto"
               >
                 Invia un&apos;altra richiesta
               </button>
