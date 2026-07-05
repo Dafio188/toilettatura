@@ -57,7 +57,7 @@ export async function submitLeadAction(formData: z.infer<typeof leadSchema>) {
       try {
         const emailTo = "info@dogwash24.it";
 
-        const htmlContent = `
+        const adminHtmlContent = `
           <h2>Nuova richiesta contatto ricevuta!</h2>
           <p>Un nuovo toelettatore si è registrato sul sito DogWash24.</p>
           <table border="0" cellpadding="8" cellspacing="0" style="border-collapse: collapse; font-family: sans-serif;">
@@ -74,7 +74,8 @@ export async function submitLeadAction(formData: z.infer<typeof leadSchema>) {
           <p style="font-size: 12px; color: #666;">Questo lead è stato salvato nel database ed è gestibile dalla tua <a href="https://app.dogwash24.it/superadmin">Dashboard Superadmin</a>.</p>
         `;
 
-        const mailRes = await fetch("https://api.resend.com/emails", {
+        // 3.1 Invio email agli admin
+        const mailResAdmin = await fetch("https://api.resend.com/emails", {
           method: "POST",
           headers: {
             "Authorization": `Bearer ${resendApiKey}`,
@@ -84,19 +85,52 @@ export async function submitLeadAction(formData: z.infer<typeof leadSchema>) {
             from: `DogWash24 Leads <${emailFrom}>`,
             to: emailTo,
             subject: `Nuovo Lead: ${validated.salonName || validated.name} (${validated.planInterest || "Richiesta"})`,
-            html: htmlContent,
+            html: adminHtmlContent,
           }),
         });
 
-        if (!mailRes.ok) {
-          const errData = await mailRes.json();
-          console.error(`[EMAIL] ❌ Resend HTTP ${mailRes.status}:`, JSON.stringify(errData));
+        if (!mailResAdmin.ok) {
+          const errData = await mailResAdmin.json();
+          console.error(`[EMAIL ADMIN] ❌ Resend HTTP ${mailResAdmin.status}:`, JSON.stringify(errData));
         } else {
-          const resendData = await mailRes.json().catch(() => ({}));
-          console.log(`[EMAIL] ✅ Email inviata con successo! Resend message ID: ${resendData?.id ?? "N/D"}`);
+          const resendData = await mailResAdmin.json().catch(() => ({}));
+          console.log(`[EMAIL ADMIN] ✅ Email inviata con successo! Resend message ID: ${resendData?.id ?? "N/D"}`);
         }
+
+        // 3.2 Invio email di conferma al cliente
+        console.log(`[EMAIL CLIENTE] 📧 Invio conferma a ${validated.email}...`);
+        const clientHtmlContent = `
+          <h2>Grazie per averci contattato, ${validated.name}!</h2>
+          <p>Abbiamo ricevuto la tua richiesta di informazioni per il piano <b>${validated.planInterest || "selezionato"}</b>.</p>
+          <p>Un nostro consulente analizzerà la tua richiesta e ti contatterà al più presto all'indirizzo email o al numero di telefono fornito.</p>
+          <br/>
+          <p>A presto,<br/>Il team di DogWash24</p>
+        `;
+
+        const mailResClient = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${resendApiKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            from: `DogWash24 <${emailFrom}>`,
+            to: validated.email,
+            subject: "Abbiamo ricevuto la tua richiesta - DogWash24",
+            html: clientHtmlContent,
+          }),
+        });
+
+        if (!mailResClient.ok) {
+          const errData = await mailResClient.json();
+          console.error(`[EMAIL CLIENTE] ❌ Resend HTTP ${mailResClient.status}:`, JSON.stringify(errData));
+        } else {
+          const resendData = await mailResClient.json().catch(() => ({}));
+          console.log(`[EMAIL CLIENTE] ✅ Email inviata con successo! Resend message ID: ${resendData?.id ?? "N/D"}`);
+        }
+
       } catch (mailErr) {
-        console.error("Errore critico durante l'invio della notifica email:", mailErr);
+        console.error("Errore critico durante l'invio delle notifiche email:", mailErr);
       }
     }
 
