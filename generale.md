@@ -37,112 +37,41 @@ Il cliente può utilizzare lo stesso wallet anche in impianti diversi. In assenz
 - il credito già disponibile può essere utilizzato offline con regole di sicurezza
 - al ripristino della connessione avviene l’allineamento dati e audit
 
-## 3) Pacchetti commerciali (stima costi)
+## 3) Piani commerciali (SaaS)
 
-Prezzi indicativi in Euro, **IVA esclusa**, per impianto tipico **da 5 postazioni**, hardware escluso.
+I prezzi dei piani commerciali (IVA esclusa), basati sulle licenze d'uso della piattaforma e i servizi cloud.
 
-### 3.0 Tabella commerciale sintetica
+### 3.0 Tabella dei Piani
 
-| Pacchetto | Setup una tantum | Maintenance annuale | Ideale per |
+| Piano | Prezzo Mensile | Prezzo Annuale (equivalente mensile) | Target Ideale |
 | --- | ---: | ---: | --- |
-| Starter Offline | 3.500 - 6.000 € | 1.500 - 3.000 €/anno | Un singolo impianto con operatività offline base |
-| Add-on Wallet Globale | 2.500 - 6.000 € | +1.000 - 2.500 €/anno | Estendere il credito su più impianti |
-| Standard Offline+Global | 6.000 - 12.000 € | 2.400 - 4.800 €/anno | Distributori e impianti già strutturati |
-| Pro Offline+Global | 12.000 - 25.000 € | 4.800 - 9.600 €/anno | Reti premium o casi con SLA e governance più forti |
-| Licenza perpetua | 25.000 - 60.000 € | 15-25%/anno | Clienti che vogliono forte investimento iniziale |
+| **START** (Licenza d'uso) | 29 €/mese | **24 €/mese** (290 €/anno) | Singolo salone che vuole ordinare l'agenda |
+| **PRO** (Noleggio + Update) | 119 €/mese | **82.5 €/mese** (990 €/anno) | Saloni automatici H24 o strutture ibride |
+| **ENTERPRISE** (Piattaforma) | Su misura | **Su misura** | Reti franchising e grandi impianti |
 
-### 3.0.1 Proposta entry aggressiva
+### 3.1 START (Licenza d'uso)
+Adatto per saloni singoli che desiderano iniziare a gestire in modo ordinato la clientela ed abilitare il wallet digitale.
+- Agenda intelligente con protezione anti-overbooking.
+- Wallet crediti prepagato (pagamenti digitali Stripe, Apple Pay, Google Pay).
+- Profili cane multi-pet con specifiche razza/taglia.
+- Check-in QR code base per sblocco.
+- Abilitazione di 1 postazione attiva nel salone.
 
-Se il mercato di ingresso richiede una proposta più facile da chiudere, si può usare un listino iniziale più commerciale:
+### 3.2 PRO (Noleggio + Update)
+Consigliato per saloni moderni automatici H24 o strutture ibride con o senza operatore.
+- Include tutte le funzionalità del piano **START**.
+- Monitoraggio sessioni live in tempo reale con timer e controllo remoto IoT delle postazioni (vasche/phon).
+- Gestione operatori integrata per organizzare prenotazioni assistite o servizi speciali.
+- Supporto prioritario e aggiornamenti evolutivi periodici della piattaforma inclusi.
+- Abilitazione fino a 5 postazioni attive nel salone.
 
-- Setup impianto 5 postazioni: **4.900 - 6.900 €**
-- Maintenance annuale: **1.800 - 2.400 €/anno**
-- Extra postazione: **250 - 350 €/anno**
-
-Questa proposta ha senso soprattutto:
-- per il primo impianto del distributore
-- come offerta pilota o caso studio
-- se il perimetro iniziale viene tenuto stretto e senza personalizzazioni importanti
-
-### 3.1 STARTER OFFLINE (impianto singolo, wallet offline per impianto)
-
-Adatto a partire con un impianto e garantire continuità operativa offline, riducendo la complessità del wallet globale.
-
-- Setup impianto (una tantum): **3.500 – 6.000 €**
-- Maintenance annuale: **1.500 – 3.000 €/anno**
-- Postazioni extra (oltre 5): **250 – 400 €/postazione/anno**
-
-### 3.2 Add-on: WALLET GLOBALE MULTI-IMPIANTO (con offline)
-
-Abilita wallet utilizzabile su più impianti. In offline resta valida la regola: **no ricariche offline**, solo utilizzo credito disponibile, con policy antifrode concordate.
-
-- Setup add-on (una tantum): **2.500 – 6.000 €**
-- Incremento maintenance: **+1.000 – 2.500 €/anno per impianto**
-
-### 3.3 STANDARD OFFLINE+GLOBAL (consigliato per distributori)
-
-Versione completa (offline + wallet globale) con impostazione “commerciale” sostenibile e vendibile.
-
-- Setup impianto (una tantum): **6.000 – 12.000 €**
-- Maintenance annuale: **2.400 – 4.800 €/anno**
-- Postazioni extra (oltre 5): **300 – 500 €/postazione/anno**
-
-Incluso nel setup:
-- installazione appliance e configurazione iniziale
-- configurazione fino a 5 postazioni
-- parametrizzazione servizi e regole operative
-- setup ruoli e admin
-- test di esercizio online/offline e go-live
-- training operativo per distributore/gestore
-
-Incluso nella maintenance:
-- aggiornamenti software e nuove versioni
-- patch sicurezza
-- supporto tecnico (SLA base) e assistenza su bug
-- manutenzione evolutiva secondo roadmap
-
-### 3.4 PRO OFFLINE+GLOBAL (impianto premium / rete multi-impianto)
-
-- Setup impianto: **12.000 – 25.000 €**
-- Maintenance annuale: **4.800 – 9.600 €/anno**
-
-Include, oltre allo Standard:
-- aggiornamenti assistiti e piano rollback
-- audit/log avanzati e strumenti di diagnostica
-- reportistica estesa e procedure operative
-- SLA più forte e canale supporto prioritario
-
-### 3.5 Licenza perpetua (una tantum) + maintenance obbligatoria
-
-- Licenza perpetua per impianto (5 postazioni): **25.000 – 60.000 €**
-- Maintenance obbligatoria: **15–25%/anno**
-
-Senza maintenance:
-- nessun aggiornamento
-- supporto limitato o a consumo
-- rischio operativo e di sicurezza a carico del gestore
-
-### 3.6 Esempio di proposta “chiara” (valore di riferimento)
-
-Per una prima proposta commerciale semplice (impianto 5 postazioni):
-- Setup: **8.500 €**
-- Maintenance: **3.600 €/anno**
-- Extra postazione: **400 €/anno** (oltre 5)
-
-Nota: in caso di più impianti installati con lo stesso distributore, si applicano normalmente sconti sul setup dal secondo impianto in poi, perché onboarding e procedure sono già standardizzati.
-
-### 3.7 Formula di ingresso consigliata
-
-Per un’offerta che resti seria ma più facile da proporre commercialmente:
-
-- **Versione pilota**: 5.900 € setup + 1.900 €/anno
-- **Versione standard**: 8.500 € setup + 3.600 €/anno
-- **Versione premium**: da 12.000 € setup + da 4.800 €/anno
-
-In questo modo il distributore vede subito tre livelli chiari:
-- pilota per iniziare
-- standard per il caso normale
-- premium per clienti più strutturati
+### 3.3 ENTERPRISE (Piattaforma completa)
+Studiato per grandi distributori di impianti self-service o reti di toelettature in franchising.
+- Include tutte le funzionalità del piano **PRO**.
+- Numero di postazioni attive e saloni illimitato.
+- Personalizzazione grafica completa e dominio personalizzato (white-label).
+- Integrazioni hardware e PLC su misura per chioschi fisici o automazioni del negozio.
+- Strumenti di audit e log avanzati per la sicurezza.
 
 ## 4) Funzionamento offline (prenotazioni + wallet)
 
