@@ -40,11 +40,21 @@ export async function submitLeadAction(formData: z.infer<typeof leadSchema>) {
       return { success: false, error: "Impossibile salvare i dati nel database." };
     }
 
+    console.log(`[LEAD] ✅ Lead salvato: id=${data.id} | email=${validated.email} | piano=${validated.planInterest ?? "N/D"}`);
+
     // 3. Invio notifica email a info@dogwash24.it via Resend REST API
     const resendApiKey = process.env.RESEND_API_KEY;
-    if (resendApiKey) {
+    const emailFrom = process.env.RESEND_FROM_EMAIL;
+
+    if (!resendApiKey) {
+      console.warn("[EMAIL] ⚠️  RESEND_API_KEY non definita — email saltata.");
+    } else if (!emailFrom) {
+      console.error("[EMAIL] ❌ RESEND_FROM_EMAIL non definita su Vercel. Aggiungila nelle env vars con valore: noreply@dogwash24.it");
+    }
+
+    if (resendApiKey && emailFrom) {
+      console.log(`[EMAIL] 📧 Invio notifica a info@dogwash24.it (from: ${emailFrom})...`);
       try {
-        const emailFrom = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
         const emailTo = "info@dogwash24.it";
 
         const htmlContent = `
@@ -79,14 +89,15 @@ export async function submitLeadAction(formData: z.infer<typeof leadSchema>) {
         });
 
         if (!mailRes.ok) {
-          const errText = await mailRes.text();
-          console.warn("Mailing API warning (Resend):", errText);
+          const errData = await mailRes.json();
+          console.error(`[EMAIL] ❌ Resend HTTP ${mailRes.status}:`, JSON.stringify(errData));
+        } else {
+          const resendData = await mailRes.json().catch(() => ({}));
+          console.log(`[EMAIL] ✅ Email inviata con successo! Resend message ID: ${resendData?.id ?? "N/D"}`);
         }
       } catch (mailErr) {
-        console.error("Errore durante l'invio della notifica email:", mailErr);
+        console.error("Errore critico durante l'invio della notifica email:", mailErr);
       }
-    } else {
-      console.log("Notifica email saltata: RESEND_API_KEY non definita in .env.local. Il lead è comunque salvato nel DB.");
     }
 
     return { success: true, leadId: data.id };
