@@ -154,23 +154,25 @@ L’obiettivo offline è garantire continuità di servizio anche con internet in
 
 Nota: la ricarica crediti (pagamento/incasso) richiede internet.
 
-## 5) Cosa è incluso (scope funzionale)
+## 5) Cosa è incluso (Scope Funzionale del Prodotto)
 
-### 5.1 Moduli per clienti finali
-- Registrazione/login e profilo.
-- Gestione cani.
-- Prenotazione guidata.
-- Wallet crediti e storico movimenti.
-- Dettaglio prenotazione e export calendario.
-- **Demo Interattiva di Prenotazione**: Flusso simulato lato cliente finale per testare l'esperienza d'uso ("Apple Feel") prima dell'acquisto.
+### 5.1 Moduli per il CLIENTE FINALE (Pet Owner)
+- **Registrazione e Accesso Sicuro (PWA)**: Accessibile istantaneamente tramite browser da smartphone (senza passare dagli app store di Apple o Google), ottimizzato come Progressive Web App per aggiungerlo con un tap alla schermata home.
+- **Profili Cane Multi-Pet**: Il cliente registra uno o più cani definendo nome, razza, note particolari (es. paura del getto dell'aria calda) e la **taglia** (Piccola, Media, Grande). La taglia determina il calcolo automatico della durata del lavaggio.
+- **Prenotazione Guidata e Selezione Servizi**: Interfaccia grafica "Apple Feel" che guida il cliente a scegliere la postazione (vasca o asciugatore), la data, l'ora e il tipo di servizio desiderato (Self-Service H24 o con Operatore Assistito in struttura).
+- **Wallet a Crediti Prepagati**: Portafoglio virtuale ricaricabile in pochi secondi. Il cliente sceglie il pacchetto di crediti e paga in sicurezza con Stripe, Apple Pay, Google Pay o Carte di Credito.
+- **QR Code di Check-in Cifrato**: Ad ogni prenotazione andata a buon fine, il sistema genera un QR Code temporizzato e crittografato. Il cliente lo scansiona all'ingresso per sbloccare la porta e attivare la postazione fisica.
+- **Storico Attività e Ricevute**: Schermata per verificare i crediti residui, lo storico dei lavaggi effettuati e per scaricare le ricevute fiscali di ricarica.
 
-### 5.2 Moduli admin (impianto)
-- Clienti e saldi.
-- Prenotazioni: filtri per stato e date, azioni admin.
-- Pagamenti/ledger: dashboard economica con filtri ed export CSV.
-- Postazioni: configurazione e mappa/layout.
-- **CRM Gestione Lead (Superadmin)**: Pannello di tracciamento commerciale delle richieste con 5 stati operativi (*Nuovo*, *Contattato*, *In trattativa*, *Da ricontattare*, *Chiuso/Firmato*).
-- **Automazione Email (Resend)**: Notifiche istantanee al gestore in caso di nuovo lead ed email di benvenuto automatica inviata al cliente con il riepilogo del piano scelto.
+### 5.2 Moduli per l'ADMIN (Gestore del Salone / Toelettatore)
+- **Dashboard Operativa del Negozio**: Pannello di controllo con riepilogo grafico delle entrate giornaliere, numero di prenotazioni attive, clienti registrati e saturazione delle postazioni.
+- **Monitoraggio Sessioni Live con Timer**: L'admin vede in tempo reale lo stato delle postazioni fisiche (vasche 1 e 2, tavoli, phon). Visualizza quale cane è in lavaggio, quale cliente sta usufruendo del servizio e il tempo residuo sul timer della vasca.
+- **Controllo Remoto IoT**: Possibilità per l'admin di intervenire via software per avviare, sospendere o terminare forzatamente l'erogazione di acqua/phon su una specifica postazione (es. in caso di emergenza o per omaggiare minuti extra al cliente).
+- **Agenda Prenotazioni e Calendario**: Gestione di tutte le prenotazioni del salone. L'admin può inserire prenotazioni manuali (es. per clienti che telefonano o entrano senza app), spostare orari o cancellare prenotazioni con rimborso crediti automatico.
+- **Anagrafica Clienti e Portafoglio**: Visualizzazione di tutti i clienti del salone, i loro cani associati, i recapiti telefonici/email e la possibilità di ricaricare o scalare manualmente crediti dal loro wallet.
+- **Configurazione Salone, Servizi e Tariffe**: L'admin definisce il numero di vasche/postazioni attive nel negozio, imposta gli orari di apertura, inserisce i servizi (es. shampoo speciale, cura del pelo) e associa il costo corrispondente in crediti.
+- **Registro Economico (Ledger) ed Esportazione**: Tabella che traccia ogni singola operazione contabile (ricariche Stripe, acquisti fisici). Esportabile in formato CSV con un click per l'invio diretto al proprio commercialista.
+- **Gestione Operatori per Servizio Assistito**: Calendario e turni dello staff del salone per organizzare gli appuntamenti in cui il cliente richiede l'assistenza diretta dell'operatore (con relativo supplemento crediti).
 
 ## 6) Cosa non è incluso (esclusioni)
 
@@ -235,3 +237,10 @@ Il software viene concesso in licenza d’uso:
 - con maintenance per aggiornamenti e supporto
 
 Non è prevista la cessione completa del codice sorgente in questa formula standard (salvo accordi enterprise dedicati).
+
+## 13) Modulo di Amministrazione Piattaforma (Riservato Superadmin - ESCLUSO DAL VIDEO)
+Questa sezione è riservata unicamente al proprietario dell'infrastruttura SaaS globale (Davide) per la gestione commerciale e non fa parte del prodotto salone/cliente. Non deve essere inclusa nella sceneggiatura o nel video esplicativo.
+
+- **CRM Gestione Richieste (Leads)**: Pannello integrato per tracciare le richieste dei toelettatori interessati ad aprire una licenza DogWash24, con gestione a 5 stati operativi (*Nuovo*, *Contattato*, *In trattativa*, *Da ricontattare*, *Chiuso/Firmato*).
+- **Automazione Email Partner (Resend)**: Invio automatico di notifiche in tempo reale al superadmin alla ricezione di nuove richieste dal modulo contatti del sito vetrina, e contestuale email di benvenuto al partner con il riepilogo del piano d'interesse.
+- **Gestione Tenant e Sotto-domini**: Pannello per attivare nuovi saloni, associare i relativi sotto-domini (`slug.app.dogwash24.it`), impostare scadenze e gestire la revoca automatica della licenza.
