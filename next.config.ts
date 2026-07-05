@@ -26,16 +26,17 @@ const nextConfig = {
           // Disabilita API browser non utilizzate
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), interest-cohort=()" },
           // CSP: permette inline per Tailwind/Framer Motion, blocca frame e object
+          // Vercel live/feedback script incluso per evitare blocchi CSP in produzione
           {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://*.vercel-scripts.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
-              "img-src 'self' data: blob: https://*.supabase.co",
-              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com",
-              "frame-src https://checkout.stripe.com https://js.stripe.com",
+              "img-src 'self' data: blob: https://*.supabase.co https://vercel.live",
+              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com https://vercel.live wss://ws-us3.pusher.com",
+              "frame-src https://checkout.stripe.com https://js.stripe.com https://vercel.live",
               "frame-ancestors 'none'",
               "object-src 'none'",
               "base-uri 'self'",
