@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { BarChart3, Clock, QrCode, ShieldCheck, Wrench, Sparkles, type LucideIcon } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { VideoModal } from "@/components/ui/video-modal";
 
 export const metadata: Metadata = {
   title: "DogWash24 — Piattaforma Toilettatura Ibrida",
@@ -43,26 +43,21 @@ export default function PiattaformaPage() {
           DogWash24 unifica la gestione delle strutture: automatizza il self-service H24 con sblocco QR e chiosco fisico, e offre un&apos;agenda avanzata per le prenotazioni assistite con i tuoi operatori. Riduci la gestione manuale, ottimizza le vasche e massimizza la resa per metro quadro.
         </p>
         <div className="flex flex-col gap-2 sm:flex-row">
-          <Link href="/prenota" className="w-full sm:w-auto">
-            <Button className="w-full" variant="primary">Vedi demo prenotazione</Button>
-          </Link>
+          <div className="w-full sm:w-auto">
+            <VideoModal
+              label="Vedi demo prenotazione"
+              poster="/hero-station.png"
+              sources={[
+                { src: "/Gestione_Software.webm", type: "video/webm" },
+                { src: "/Gestione_Software.mp4", type: "video/mp4" },
+              ]}
+            />
+          </div>
           <Link href="/richiedi-info?plan=PRO" className="w-full sm:w-auto">
-            <Button className="w-full" variant="secondary">Richiedi una demo</Button>
+            <button className="w-full rounded-xl border border-slate-700 px-5 py-2.5 text-sm font-semibold text-slate-200 transition-all hover:border-slate-500 hover:bg-slate-800/60">
+              Richiedi una demo
+            </button>
           </Link>
-        </div>
-
-        <div className="mt-6 overflow-hidden rounded-2xl border border-slate-800 bg-slate-950/50 shadow-2xl">
-          <video 
-            controls 
-            preload="metadata" 
-            playsInline 
-            className="aspect-video w-full"
-            poster="/hero-station.png"
-          >
-            <source src="/Gestione_Software.webm" type="video/webm" />
-            <source src="/Gestione_Software.mp4" type="video/mp4" />
-            Il tuo browser non supporta il tag video.
-          </video>
         </div>
       </section>
 
