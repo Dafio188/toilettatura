@@ -3,6 +3,8 @@
 -- Aggiorna la vista admin_customers_overview per includere nome e slug del salone
 -- ==============================================================================
 
+DROP VIEW IF EXISTS public.admin_customers_overview;
+
 CREATE OR REPLACE VIEW public.admin_customers_overview
 WITH (security_invoker = true) AS
 SELECT

@@ -35,7 +35,12 @@ export async function sendBookingConfirmationWhatsApp(
 
     const message = `🐾 *DogWash24 - Prenotazione Confermata!*\n\nCiao! Ti confermiamo l'appuntamento per *${details.dogName}*.\n\n🗓️ Quando: ${dateStr}\n📍 Postazione: ${details.stationName}\n✂️ Servizio: ${details.serviceLabel}\n\nTi aspettiamo!`;
 
-    await sendWhatsAppMessage({ to: profile.phone, message });
+    await sendWhatsAppMessage({
+      to: profile.phone,
+      message,
+      templateName: "conferma_prenotazione",
+      templateParams: [details.dogName, dateStr, details.stationName, details.serviceLabel]
+    });
   } catch (err) {
     // Non-critico: la prenotazione è già confermata, la notifica WhatsApp è best-effort
     console.warn("[sendBookingConfirmationWhatsApp] Errore non bloccante:", err);

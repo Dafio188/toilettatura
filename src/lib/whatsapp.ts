@@ -10,9 +10,11 @@
 type SendWhatsAppParams = {
   to: string; // Formato E.164 o con country code (es. +393331234567)
   message: string;
+  templateName?: string;
+  templateParams?: string[];
 };
 
-export async function sendWhatsAppMessage({ to, message }: SendWhatsAppParams) {
+export async function sendWhatsAppMessage({ to, message, templateName, templateParams }: SendWhatsAppParams) {
   const url = process.env.WHATSAPP_API_URL;
   const token = process.env.WHATSAPP_API_TOKEN;
   const provider = process.env.WHATSAPP_PROVIDER || "ultramsg";
@@ -24,7 +26,13 @@ export async function sendWhatsAppMessage({ to, message }: SendWhatsAppParams) {
   }
 
   // Formatta il numero (es. rimuove il + per Ultramsg o per Meta)
-  const cleanPhone = to.replace(/[^0-9]/g, "");
+  let cleanPhone = to.replace(/[^0-9]/g, "");
+
+  // Se è un numero italiano di 9 o 10 cifre che inizia con '3' (classico cellulare),
+  // aggiungiamo automaticamente il prefisso internazionale '39' richiesto da Ultramsg.
+  if (cleanPhone.length >= 9 && cleanPhone.length <= 10 && cleanPhone.startsWith("3")) {
+    cleanPhone = "39" + cleanPhone;
+  }
 
   try {
     if (provider === "ultramsg") {
@@ -48,8 +56,56 @@ export async function sendWhatsAppMessage({ to, message }: SendWhatsAppParams) {
       return { success: true, simulated: false };
     }
     
-    // Altri provider (es. Meta Cloud API)
-    // if (provider === "meta") { ... }
+    if (provider === "meta") {
+      const payload: any = {
+        messaging_product: "whatsapp",
+        recipient_type: "individual",
+        to: cleanPhone,
+      };
+
+      if (templateName) {
+        payload.type = "template";
+        payload.template = {
+          name: templateName,
+          language: {
+            code: "it",
+          },
+          components: [
+            {
+              type: "body",
+              parameters: (templateParams ?? []).map((param) => ({
+                type: "text",
+                text: param,
+              })),
+            },
+          ],
+        };
+      } else {
+        payload.type = "text";
+        payload.text = {
+          preview_url: false,
+          body: message,
+        };
+      }
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(
+          `Errore API Meta WhatsApp: ${response.statusText}. Dettagli: ${JSON.stringify(errData)}`
+        );
+      }
+
+      return { success: true, simulated: false };
+    }
 
     throw new Error("Provider WhatsApp non supportato.");
   } catch (error) {

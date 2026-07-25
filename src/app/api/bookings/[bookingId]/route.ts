@@ -171,7 +171,12 @@ async function notifyWaitlist({
       `Sei in lista d'attesa: prenota subito prima che si riempia di nuovo! 👇\n` +
       `https://app.dogwash24.it/prenota`;
 
-    await sendWhatsAppMessage({ to: profile.phone, message }).catch((e) =>
+    await sendWhatsAppMessage({
+      to: profile.phone,
+      message,
+      templateName: "notifica_lista_attesa",
+      templateParams: [name, dateLabel, serviceLabel, "https://app.dogwash24.it/prenota"]
+    }).catch((e) =>
       console.warn(`[notifyWaitlist] WhatsApp fallito per ${entry.customer_id}:`, e)
     );
 
