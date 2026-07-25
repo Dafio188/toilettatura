@@ -58,10 +58,8 @@ export async function middleware(request: NextRequest) {
 
   if (isPageRequest) {
     try {
-      const { data: tenant } = await (supabase.from("tenants") as any)
-        .select("id, name, slug, subscription_ends_at")
-        .eq("slug", targetSubdomain)
-        .maybeSingle();
+      const { data: tenantRes } = await (supabase as any).rpc("get_tenant_by_slug", { p_slug: targetSubdomain });
+      const tenant = Array.isArray(tenantRes) ? tenantRes[0] : tenantRes;
 
       if (tenant) {
         // Impostiamo il cookie del tenant corrente sulla response per il client

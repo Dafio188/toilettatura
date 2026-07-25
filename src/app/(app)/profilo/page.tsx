@@ -12,12 +12,9 @@ export const dynamic = "force-dynamic";
 
 type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
 
-type SearchParams = { complete?: string; next?: string; missing?: string };
+import { safeNextPath } from "@/lib/url";
 
-function safeNextPath(value: unknown) {
-  const raw = typeof value === "string" ? value : "";
-  return raw.startsWith("/") && !raw.startsWith("//") ? raw : "/";
-}
+type SearchParams = { complete?: string; next?: string; missing?: string };
 
 function isProfileComplete(profile: Pick<ProfileRow, "first_name" | "last_name" | "phone"> | null | undefined) {
   const firstName = String(profile?.first_name ?? "").trim();

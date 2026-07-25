@@ -1,11 +1,7 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { Database } from "@/types/database";
-
-function safeNextPath(value: unknown) {
-  const raw = typeof value === "string" ? value : "";
-  return raw.startsWith("/") && !raw.startsWith("//") ? raw : "/profilo";
-}
+import { safeNextPath } from "@/lib/url";
 
 export async function POST(request: Request) {
   const supabase = await createSupabaseServerClient();

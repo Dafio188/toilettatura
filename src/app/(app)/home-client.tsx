@@ -114,8 +114,17 @@ export default function HomeClient() {
     }
     setAuthLoading(true);
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Accesso non riuscito.");
+      }
+
       const redirected = await maybeRequireProfileCompletion(data.user as any);
       if (redirected) return;
       router.refresh();
@@ -202,6 +211,9 @@ export default function HomeClient() {
   const toFriendlyMessage = (err: any) => {
     const msg = String(err?.message ?? "");
     const lower = msg.toLowerCase();
+    if (lower.includes("too many requests") || lower.includes("rate limit") || lower.includes("429")) {
+      return "Troppi tentativi di accesso falliti. Per ragioni di sicurezza, attendi 60 secondi prima di riprovare.";
+    }
     if (lower.includes("invalid login credentials")) return "Credenziali non valide. Controlla email e password.";
     if (lower.includes("email not confirmed")) return "Email non confermata. Conferma la registrazione tramite il link inviato via mail.";
     if (lower.includes("user already registered")) return "Esiste già un account registrato con questa email. Prova ad accedere.";

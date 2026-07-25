@@ -1,18 +1,6 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-
-/** Accetta solo path relativi — previene open redirect verso domini esterni */
-function safeNextPath(value: string | null) {
-  if (!value || !value.startsWith("/") || value.startsWith("//")) return "/";
-  // Blocca anche protocolli mascherati tipo /\evil.com
-  try {
-    const url = new URL(value, "http://localhost");
-    if (url.hostname !== "localhost") return "/";
-  } catch {
-    return "/";
-  }
-  return value;
-}
+import { safeNextPath } from "@/lib/url";
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);

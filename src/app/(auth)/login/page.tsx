@@ -13,26 +13,29 @@ import { tryCreateSupabaseBrowserClient } from "@/lib/supabase/optional";
 import { getTenantIdFromClient } from "@/lib/tenant-client";
 import { LogIn, Mail, UserPlus, ArrowLeft, Home, CalendarDays } from "lucide-react";
 
+import { safeNextPath } from "@/lib/url";
+
 export const dynamic = "force-dynamic";
 
 type AuthMode = "signin" | "signup";
 
 function resolvePostLoginPath(nextPath: string, user: { app_metadata?: { role?: string } } | null | undefined) {
+  const safePath = safeNextPath(nextPath);
   const role = user?.app_metadata?.role;
   
   if (role === "superadmin") {
-    return nextPath.startsWith("/superadmin") ? nextPath : "/superadmin";
+    return safePath.startsWith("/superadmin") ? safePath : "/superadmin";
   }
   
   if (role === "admin") {
-    return nextPath.startsWith("/admin") ? nextPath : "/admin";
+    return safePath.startsWith("/admin") ? safePath : "/admin";
   }
   
-  if (nextPath.startsWith("/admin") || nextPath.startsWith("/superadmin")) {
+  if (safePath.startsWith("/admin") || safePath.startsWith("/superadmin")) {
     return "/";
   }
   
-  return nextPath;
+  return safePath;
 }
 
 function isProfileComplete(profile: { first_name: string | null; last_name: string | null; phone: string | null } | null | undefined) {
@@ -44,7 +47,7 @@ function isProfileComplete(profile: { first_name: string | null; last_name: stri
 
 function buildAuthCallbackUrl(nextPath: string) {
   if (typeof window === "undefined") return undefined;
-  return `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`;
+  return `${window.location.origin}/auth/callback?next=${encodeURIComponent(safeNextPath(nextPath))}`;
 }
 
 function buildPasswordResetUrl() {
@@ -66,8 +69,7 @@ function LoginContent() {
   const supabase = useMemo(() => tryCreateSupabaseBrowserClient(), []);
   const isConfigured = Boolean(supabase);
   const nextPath = useMemo(() => {
-    const value = searchParams?.get("next");
-    return value && value.startsWith("/") ? value : "/";
+    return safeNextPath(searchParams?.get("next"));
   }, [searchParams]);
 
   const [mode, setMode] = useState<AuthMode>("signin");
@@ -199,6 +201,9 @@ function LoginContent() {
     if (lower.includes("pkce") && lower.includes("code verifier")) {
       return "Questo link e' stato aperto in un browser/dispositivo diverso da quello che ha avviato la procedura. Apri il link nello stesso browser (non dentro l'app Gmail) oppure ripeti il login/registrazione e poi usa il link appena ricevuto.";
     }
+    if (lower.includes("too many requests") || lower.includes("rate limit") || lower.includes("429")) {
+      return "Troppi tentativi di accesso falliti. Per ragioni di sicurezza, attendi 60 secondi prima di riprovare.";
+    }
     if (lower.includes("invalid login credentials")) return "Credenziali non valide. Controlla email e password.";
     if (lower.includes("email not confirmed")) return "Email non confermata. Controlla la posta e conferma la registrazione, poi accedi.";
     if (lower.includes("password should be at least")) return "Password troppo corta. Scegli una password piu lunga.";
@@ -225,8 +230,16 @@ function LoginContent() {
     if (validation) return setMessage(validation);
     setLoading(true);
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Accesso non riuscito.");
+      }
 
       const redirected = await maybeRequireProfileCompletion(data.user as any);
       if (redirected) return;

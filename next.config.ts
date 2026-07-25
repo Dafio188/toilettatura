@@ -5,12 +5,17 @@ const isDev = process.env.NODE_ENV === "development";
 const nextConfig = {
   reactStrictMode: true,
   typedRoutes: true,
+  poweredByHeader: false,
   // Origini dev ammessi solo in locale — mai esposti in produzione
   ...(isDev ? { allowedDevOrigins: ["localhost", "100.108.195.2"] } : {}),
   images: {
     remotePatterns: [{ protocol: "https", hostname: "**.supabase.co" }]
   },
   async headers() {
+    const scriptSrc = isDev
+      ? "'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://*.vercel-scripts.com"
+      : "'self' 'unsafe-inline' https://vercel.live https://*.vercel-scripts.com";
+
     return [
       {
         source: "/(.*)",
@@ -26,12 +31,11 @@ const nextConfig = {
           // Disabilita API browser non utilizzate
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), interest-cohort=()" },
           // CSP: permette inline per Tailwind/Framer Motion, blocca frame e object
-          // Vercel live/feedback script incluso per evitare blocchi CSP in produzione
           {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://*.vercel-scripts.com",
+              `script-src ${scriptSrc}`,
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: blob: https://*.supabase.co https://vercel.live",

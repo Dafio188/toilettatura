@@ -34,22 +34,16 @@ export async function getTenantFromHost(options?: { base?: boolean }): Promise<T
   const supabase = await createSupabaseServerClient({ base: options?.base });
 
   if (subdomain) {
-    const { data: tenant } = await supabase
-      .from("tenants")
-      .select("*")
-      .eq("slug", subdomain)
-      .maybeSingle();
+    const { data: tenantRes } = await (supabase as any).rpc("get_tenant_by_slug", { p_slug: subdomain });
+    const tenant = Array.isArray(tenantRes) ? tenantRes[0] : tenantRes;
     if (tenant) {
-      return tenant;
+      return tenant as TenantRow;
     }
   }
 
   // Fallback: carichiamo il tenant di default (quello preesistente per i dati storici)
-  const { data: defaultTenant } = await supabase
-    .from("tenants")
-    .select("*")
-    .eq("slug", "default")
-    .maybeSingle();
+  const { data: defaultRes } = await (supabase as any).rpc("get_tenant_by_slug", { p_slug: "default" });
+  const defaultTenant = Array.isArray(defaultRes) ? defaultRes[0] : defaultRes;
 
-  return defaultTenant || null;
+  return (defaultTenant as TenantRow) || null;
 }
