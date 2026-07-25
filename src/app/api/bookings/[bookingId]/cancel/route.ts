@@ -11,6 +11,23 @@ export async function POST(request: Request, context: { params: Promise<{ bookin
     return Response.json({ error: "Non autenticato" }, { status: 401 });
   }
 
+  // Verifica che la prenotazione esista e appartenga all'utente autenticato (IDOR protection)
+  const { data: bookingData, error: bookingFetchErr } = await supabase
+    .from("bookings")
+    .select("id, customer_id, status")
+    .eq("id", bookingId)
+    .eq("customer_id", user.id)
+    .maybeSingle();
+
+  if (bookingFetchErr || !bookingData) {
+    return Response.json({ error: "Prenotazione non trovata" }, { status: 404 });
+  }
+
+  const status = (bookingData as any)?.status;
+  if (status === "CANCELLED" || status === "COMPLETED") {
+    return Response.json({ error: "La prenotazione non è cancellabile" }, { status: 400 });
+  }
+
   const { data, error } = await supabase.rpc("cancel_booking", { p_booking_id: bookingId } as any);
   if (error) {
     return Response.json({ error: error.message }, { status: 400 });
