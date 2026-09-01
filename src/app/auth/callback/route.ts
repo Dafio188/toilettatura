@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getTenantSubdomainFromHost } from "@/lib/tenant-host";
 import { safeNextPath } from "@/lib/url";
 
 export async function GET(request: Request) {
@@ -22,26 +23,7 @@ export async function GET(request: Request) {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         const host = request.headers.get("host") || "";
-        const domainParts = host.split(".");
-        let subdomain = "";
-
-        if (host.includes("localhost") || host.includes("127.0.0.1")) {
-          const parts = host.split(":");
-          const part0 = parts[0];
-          if (part0) {
-            const localParts = part0.split(".");
-            if (localParts.length > 1) {
-              subdomain = localParts[0] || "";
-            }
-          }
-        } else {
-          if (domainParts.length >= 3) {
-            const sub = domainParts[0] || "";
-            if (sub !== "www" && sub !== "app") {
-              subdomain = sub;
-            }
-          }
-        }
+        const subdomain = getTenantSubdomainFromHost(host);
 
         if (subdomain && subdomain !== "default") {
           // Controlliamo se è un nuovo utente (creato negli ultimi 30 secondi)

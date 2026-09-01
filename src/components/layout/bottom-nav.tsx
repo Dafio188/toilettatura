@@ -48,7 +48,6 @@ export function BottomNav() {
     } else {
       return [
         { href: "/" as Route, label: "Home", Icon: Home },
-        { href: "/prenota" as Route, label: "Disponibilità", Icon: CalendarDays },
         { href: "/login" as Route, label: "Accedi", Icon: LogIn }
       ];
     }

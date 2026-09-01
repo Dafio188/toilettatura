@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { tryCreateSupabaseBrowserClient } from "@/lib/supabase/optional";
 import { getTenantIdFromClient } from "@/lib/tenant-client";
-import { LogIn, Mail, UserPlus, ArrowLeft, Home, CalendarDays } from "lucide-react";
+import { LogIn, Mail, UserPlus, ArrowLeft, Home } from "lucide-react";
 
 import { safeNextPath } from "@/lib/url";
 
@@ -525,20 +525,13 @@ function LoginContent() {
 
       {/* ── Mini Bottom Nav (identica alla BottomNav principale) ── */}
       <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-slate-800 bg-slate-950/90 backdrop-blur">
-        <div className="mx-auto grid max-w-md grid-cols-3 px-2 pb-[calc(env(safe-area-inset-bottom))] pt-2">
+        <div className="mx-auto grid max-w-md grid-cols-2 px-2 pb-[calc(env(safe-area-inset-bottom))] pt-2">
           <Link
             href="/"
             className="flex min-h-12 flex-col items-center justify-center gap-1 rounded-xl px-2 py-2 text-[11px] leading-none text-slate-300 hover:text-slate-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70"
           >
             <Home className="h-5 w-5 text-slate-300" aria-hidden="true" />
             <span className="truncate">Home</span>
-          </Link>
-          <Link
-            href={"/prenota" as Route}
-            className="flex min-h-12 flex-col items-center justify-center gap-1 rounded-xl px-2 py-2 text-[11px] leading-none text-slate-300 hover:text-slate-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70"
-          >
-            <CalendarDays className="h-5 w-5 text-slate-300" aria-hidden="true" />
-            <span className="truncate">Disponibilità</span>
           </Link>
           <Link
             href={"/login" as Route}

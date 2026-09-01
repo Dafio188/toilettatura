@@ -1,10 +1,12 @@
 import type { Route } from "next";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getTenantPublicContext } from "@/lib/tenant-public";
 import HomeClient from "./home-client";
 
 export default async function HomePage() {
   const supabase = await createSupabaseServerClient();
+  const tenant = await getTenantPublicContext();
   const {
     data: { user }
   } = await supabase.auth.getUser();
@@ -19,5 +21,5 @@ export default async function HomePage() {
     redirect("/admin" as Route);
   }
 
-  return <HomeClient />;
+  return <HomeClient branding={tenant.branding} />;
 }

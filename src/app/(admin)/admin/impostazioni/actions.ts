@@ -1,6 +1,9 @@
 "use server";
 
 import { requireAdmin } from "@/lib/auth/require-admin";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { sanitizeTenantBrandingInput } from "@/lib/tenant-branding";
+import { buildTenantLogoStoragePath, TENANT_BRANDING_BUCKET, validateTenantLogoFile } from "@/lib/tenant-logo-upload";
 import { revalidatePath } from "next/cache";
 
 export async function updateSystemSettings(formData: FormData) {
@@ -37,4 +40,122 @@ export async function updateSystemSettings(formData: FormData) {
 
   revalidatePath("/admin/impostazioni");
   revalidatePath("/admin/prenotazioni");
+}
+
+export async function updateTenantPublicBranding(formData: FormData) {
+  const { tenantId } = await requireAdmin();
+  const adminSupabase = createSupabaseAdminClient();
+
+  const publicBranding = sanitizeTenantBrandingInput({
+    clientDisplayName: formData.get("client_display_name"),
+    logoUrl: formData.get("logo_url"),
+    heroTitle: formData.get("hero_title"),
+    heroSubtitle: formData.get("hero_subtitle"),
+    heroDescription: formData.get("hero_description"),
+    contactInfo: formData.get("contact_info"),
+    showPlatformBranding: formData.get("show_platform_branding") === "on",
+  });
+
+  const { data: tenant, error: readError } = await (adminSupabase.from("tenants") as any)
+    .select("settings")
+    .eq("id", tenantId)
+    .maybeSingle();
+
+  if (readError) {
+    throw new Error("Errore durante il caricamento del tenant: " + readError.message);
+  }
+
+  const currentSettings =
+    tenant?.settings && typeof tenant.settings === "object" && !Array.isArray(tenant.settings)
+      ? tenant.settings
+      : {};
+
+  const { error } = await (adminSupabase.from("tenants") as any)
+    .update({
+      settings: {
+        ...currentSettings,
+        publicBranding,
+      },
+    })
+    .eq("id", tenantId);
+
+  if (error) {
+    throw new Error("Errore durante il salvataggio del branding pubblico: " + error.message);
+  }
+
+  revalidatePath("/");
+  revalidatePath("/login");
+  revalidatePath("/admin/impostazioni");
+}
+
+export async function uploadTenantPublicLogo(formData: FormData) {
+  const { tenantId } = await requireAdmin();
+  const adminSupabase = createSupabaseAdminClient();
+
+  const logoFile = formData.get("logo_file");
+  if (!(logoFile instanceof File)) {
+    throw new Error("File logo non ricevuto.");
+  }
+
+  const validation = validateTenantLogoFile(logoFile);
+  if (!validation.ok) {
+    throw new Error(validation.error);
+  }
+
+  const path = buildTenantLogoStoragePath(tenantId, logoFile.name, logoFile.type);
+  const buffer = Buffer.from(await logoFile.arrayBuffer());
+
+  const uploadRes = await adminSupabase.storage
+    .from(TENANT_BRANDING_BUCKET)
+    .upload(path, buffer, {
+      contentType: logoFile.type,
+      cacheControl: "3600",
+      upsert: true,
+    });
+
+  if (uploadRes.error) {
+    throw new Error("Errore upload logo: " + uploadRes.error.message);
+  }
+
+  const { data: publicUrlData } = adminSupabase.storage.from(TENANT_BRANDING_BUCKET).getPublicUrl(path);
+  const publicLogoUrl = publicUrlData.publicUrl;
+
+  const { data: tenant, error: readError } = await (adminSupabase.from("tenants") as any)
+    .select("settings")
+    .eq("id", tenantId)
+    .maybeSingle();
+
+  if (readError) {
+    throw new Error("Errore durante il caricamento del tenant: " + readError.message);
+  }
+
+  const currentSettings =
+    tenant?.settings && typeof tenant.settings === "object" && !Array.isArray(tenant.settings)
+      ? tenant.settings
+      : {};
+
+  const currentBranding =
+    currentSettings.publicBranding && typeof currentSettings.publicBranding === "object" && !Array.isArray(currentSettings.publicBranding)
+      ? currentSettings.publicBranding
+      : {};
+
+  const { error } = await (adminSupabase.from("tenants") as any)
+    .update({
+      settings: {
+        ...currentSettings,
+        publicBranding: {
+          ...currentBranding,
+          logoUrl: publicLogoUrl,
+        },
+      },
+    })
+    .eq("id", tenantId);
+
+  if (error) {
+    throw new Error("Errore durante il salvataggio del logo pubblico: " + error.message);
+  }
+
+  revalidatePath("/");
+  revalidatePath("/login");
+  revalidatePath("/admin/impostazioni");
 }

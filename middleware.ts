@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import type { Database } from "./src/types/database";
+import { getTenantSubdomainFromHost } from "./src/lib/tenant-host";
 
 export async function middleware(request: NextRequest) {
   const response = NextResponse.next({ request });
@@ -25,26 +26,7 @@ export async function middleware(request: NextRequest) {
 
   // --- CONTROLLO SCADENZA E ISOLAMENTO TENANT (SUBDOMAIN CHECKS) ---
   const host = request.headers.get("host") || "";
-  const domainParts = host.split(".");
-  let subdomain = "";
-
-  if (host.includes("localhost") || host.includes("127.0.0.1")) {
-    const parts = host.split(":");
-    const part0 = parts[0];
-    if (part0) {
-      const localParts = part0.split(".");
-      if (localParts.length > 1) {
-        subdomain = localParts[0] || "";
-      }
-    }
-  } else {
-    if (domainParts.length >= 3) {
-      const sub = domainParts[0] || "";
-      if (sub !== "www" && sub !== "app") {
-        subdomain = sub;
-      }
-    }
-  }
+  const subdomain = getTenantSubdomainFromHost(host);
 
   const targetSubdomain = subdomain || "default";
   
@@ -111,7 +93,7 @@ export async function middleware(request: NextRequest) {
 
   const isAdminRoute = request.nextUrl.pathname.startsWith("/admin");
 
-  const isProtectedRoute = request.nextUrl.pathname.startsWith("/prenota/nuova") ||
+  const isProtectedRoute = request.nextUrl.pathname.startsWith("/prenota") ||
     request.nextUrl.pathname.startsWith("/cani") ||
     request.nextUrl.pathname.startsWith("/wallet") ||
     request.nextUrl.pathname.startsWith("/profilo") ||

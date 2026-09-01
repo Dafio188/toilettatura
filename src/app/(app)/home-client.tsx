@@ -13,13 +13,23 @@ import { createGoogleCalendarUrl } from "@/lib/booking-planner";
 import { tryCreateSupabaseBrowserClient } from "@/lib/supabase/optional";
 import { getTenantIdFromClient } from "@/lib/tenant-client";
 import { safeGetSession } from "@/lib/supabase/safe-session";
+import type { TenantPublicBranding } from "@/lib/tenant-branding";
 import type { Database } from "@/types/database";
 
 type Booking = Database["public"]["Tables"]["bookings"]["Row"];
 type Dog = Pick<Database["public"]["Tables"]["dogs"]["Row"], "id" | "name">;
 type Station = Pick<Database["public"]["Tables"]["stations"]["Row"], "id" | "name">;
 
-export default function HomeClient() {
+function getBrandInitials(label: string) {
+  return label
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
+}
+
+export default function HomeClient({ branding }: { branding: TenantPublicBranding }) {
   const router = useRouter();
   const supabase = useMemo(() => tryCreateSupabaseBrowserClient(), []);
   const [isLogged, setIsLogged] = useState<boolean | null>(null);
@@ -288,24 +298,64 @@ export default function HomeClient() {
   if (!isLogged) {
     return (
       <div className="space-y-6 py-4 max-w-md mx-auto">
-        <section className="text-center space-y-3">
-          <div className="mx-auto w-44 max-w-full">
-            <Image
-              src="/logo.png"
-              alt="DogWash24 - Self Service Toilettatura"
-              width={440}
-              height={440}
-              priority
-              className="h-auto w-full"
-            />
+        <section className="space-y-4 text-center">
+          <div className="flex items-center justify-center gap-3">
+            {branding.showPlatformBranding ? (
+              <div className="flex h-20 w-20 items-center justify-center rounded-3xl border border-slate-800 bg-slate-950/70 p-3 shadow-[0_18px_40px_rgba(0,0,0,0.28)]">
+                <Image
+                  src="/logo.png"
+                  alt="DogWash24 - Self Service Toilettatura"
+                  width={200}
+                  height={200}
+                  priority
+                  className="h-auto w-full"
+                />
+              </div>
+            ) : null}
+
+            {branding.logoUrl ? (
+              <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-3xl border border-slate-800 bg-white/95 p-3 shadow-[0_18px_40px_rgba(0,0,0,0.28)]">
+                <Image
+                  src={branding.logoUrl}
+                  alt={`Logo ${branding.clientDisplayName}`}
+                  width={200}
+                  height={200}
+                  className="h-auto w-full object-contain"
+                />
+              </div>
+            ) : (
+              <div className="flex h-20 w-20 items-center justify-center rounded-3xl border border-blue-500/20 bg-gradient-to-br from-blue-500/15 to-cyan-500/10 shadow-[0_18px_40px_rgba(0,0,0,0.28)]">
+                <span className="text-xl font-bold tracking-wide text-blue-100">{getBrandInitials(branding.clientDisplayName)}</span>
+              </div>
+            )}
           </div>
-          <p className="text-xs font-bold uppercase tracking-wider text-blue-400">Self-Service H24</p>
+
+          <div className="space-y-2">
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-blue-400">
+              {branding.showPlatformBranding ? `${branding.platformDisplayName} x ${branding.clientDisplayName}` : branding.clientDisplayName}
+            </p>
+            <p className="text-sm font-semibold text-slate-200">{branding.clientDisplayName}</p>
+          </div>
+
           <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-slate-100 to-slate-300 bg-clip-text text-transparent">
-            DogWash24
+            {branding.heroTitle}
           </h1>
-          <p className="mx-auto max-w-xs text-sm text-slate-400 leading-relaxed">
-            La soluzione self-service per la cura e il lavaggio del tuo cane, accessibile a qualsiasi ora del giorno e della notte.
+          <p className="mx-auto max-w-sm text-sm font-medium text-slate-200 leading-relaxed">
+            {branding.heroSubtitle}
           </p>
+          <p className="mx-auto max-w-sm text-sm text-slate-400 leading-relaxed">{branding.heroDescription}</p>
+
+          {branding.contactInfo ? (
+            <div className="mx-auto max-w-sm rounded-2xl border border-slate-800/80 bg-slate-900/40 px-4 py-3 text-sm text-slate-300">
+              {branding.contactInfo}
+            </div>
+          ) : null}
+
+          <div className="flex justify-center pt-1">
+            <Link href="/login">
+              <Button variant="primary">Accedi per prenotare</Button>
+            </Link>
+          </div>
         </section>
 
         {/* Guida informativa step-by-step */}
@@ -383,9 +433,13 @@ export default function HomeClient() {
         </section>
 
         <div className="pt-2 text-center">
-          <Link href="/piattaforma" className="text-xs font-semibold text-slate-400 underline-offset-4 hover:underline hover:text-slate-200 transition-colors">
-            Sei un gestore? Scopri la piattaforma DogWash24
-          </Link>
+          {branding.showPlatformBranding ? (
+            <Link href="/piattaforma" className="text-xs font-semibold text-slate-400 underline-offset-4 hover:underline hover:text-slate-200 transition-colors">
+              Sei un gestore? Scopri la piattaforma DogWash24
+            </Link>
+          ) : (
+            <p className="text-xs font-semibold text-slate-500">Piattaforma di prenotazione gestita con DogWash24</p>
+          )}
         </div>
       </div>
     );
@@ -405,7 +459,7 @@ export default function HomeClient() {
             height={120}
             className="h-8 w-auto"
           />
-          <p className="text-xs font-medium tracking-wide text-slate-400">Toilettatura · Self-Service</p>
+          <p className="text-xs font-medium tracking-wide text-slate-400">{branding.clientDisplayName}</p>
         </div>
         <h2 className="text-2xl font-semibold tracking-tight">La tua Dashboard</h2>
         <p className="text-sm leading-relaxed text-slate-200">
